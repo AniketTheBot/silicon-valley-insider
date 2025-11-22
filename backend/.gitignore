@@ -1,0 +1,32 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+env/
+.venv/
+.env
+
+# Environment Variables (CRITICAL)
+.env
+.env.prod
+.env.dev
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# IDE / Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# MacOS
+.DS_Store
