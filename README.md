@@ -187,7 +187,9 @@ root/
 │   │   │   └── CursorGlow.jsx  # Custom UI Effects
 │   │   ├── App.jsx             # Layout & Layering
 │   └── tailwind.config.js
-🛡️ Troubleshooting
+
+```
+## 🛡️ Troubleshooting
 Graph is Empty?
 Did you run python simulate_feed.py?
 Check your .env credentials.
