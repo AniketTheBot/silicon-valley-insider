@@ -190,10 +190,10 @@ root/
 
 ```
 ## 🛡️ Troubleshooting
-Graph is Empty?
-Did you run python simulate_feed.py?
-Check your .env credentials.
-Camera doesn't fly?
-Ensure the node exists in the graph. The chat logs 🎯 Chatbot identified target: [Name] in the console.
-"Connection Error"?
-Ensure Backend is running on Port 8000.
+- Graph is Empty?
+- Did you run python simulate_feed.py?
+- Check your .env credentials.
+- Camera doesn't fly?
+- Ensure the node exists in the graph. The chat logs 🎯 Chatbot identified target: [Name] in the console.
+- "Connection Error"?
+- Ensure Backend is running on Port 8000.
