@@ -1,194 +1,147 @@
-# 🕸️ The Silicon Valley Insider (GraphRAG)
+# 🕸️ Silicon Valley Insider (GraphRAG)
 
-A Live Knowledge Graph Agent that maps the Tech Ecosystem.
-Powered by FastAPI, Neo4j, Llama 3 (Groq), and React Force Graph 3D.
+A live Knowledge-Graph Agent mapping the tech ecosystem.  
+Backend: FastAPI + Neo4j. AI: Llama 3 (Groq). Frontend: React + React Force Graph 3D.
 
-![Status](https://img.shields.io/badge/Status-Live-brightgreen)
-![Stack](https://img.shields.io/badge/Stack-MERN_on_Steroids-blueviolet)
+![Status](https://img.shields.io/badge/Status-Live-brightgreen) ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi) ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![Neo4j](https://img.shields.io/badge/Neo4j-008CC1?logo=neo4j&logoColor=white)
 
-## 💡 The Concept
+## Concept
 
-Standard RAG (Retrieval Augmented Generation) has a flaw: **Context Collapse**. If you search for "Sam Altman", a Vector Database finds documents with his name but misses the temporal connections (e.g., He was Fired, then Rehired, then Joined Microsoft).
+Traditional RAG can suffer from "context collapse." This project extracts entities and relationships from news to build a temporal, connected knowledge graph, enabling a chat agent to traverse and answer contextual questions.
 
-The Silicon Valley Insider solves this by building a **Knowledge Graph**.
+Key flow:
+- Ingest news (live or simulated)
+- Extract entities/relations via Llama 3 (Groq)
+- Store graph in Neo4j
+- Expose FastAPI endpoints for chat, queries, and visualization
+- Frontend visualizer shows interactive 3D graph and camera focus
 
-- Instead of chunking text, we use an AI Agent to extract **Entities (Nodes)** and **Relationships (Edges)**.
-- **Input**: Live RSS Feeds / Simulated News Data.
-- **Processing**: Llama 3 extracts structured JSON (e.g., Microsoft → INVESTED_IN → OpenAI).
-- **Storage**: Neo4j Graph Database.
-- **Output**: An Agentic Chatbot that "walks" the graph to answer complex questions + a 3D Visualization that reacts to the conversation.
+## Features
 
-## 🏗️ Architecture
+- Entity & relation extraction (text → structured graph)
+- Neo4j storage (AuraDB supported)
+- GraphRAG chat endpoint (graph-augmented answers)
+- 3D frontend visualizer with camera focus
+- Simulation script to populate the graph for testing
 
-### Ingestion Pipeline (ETL)
-- Scrapes TechCrunch/The Verge (or uses `simulate_feed.py` for testing).
-- Llama 3 (Groq) analyzes text and extracts Entities & Sentiment.
-- Deduplication Logic ensures "Sam Altman" and "Samuel Altman" merge into one node.
+## Tech Stack
 
-### Database (The Brain)
-- Neo4j AuraDB stores the connected web of data.
+- Backend: Python 3.11+, FastAPI, pydantic
+- Database: Neo4j (AuraDB)
+- AI: Llama 3 via Groq API
+- Frontend: React, Vite, React Force Graph 3D
+- Dev: uvicorn, node/npm
 
-### Backend (The API)
-- FastAPI serves the Graph data and handles Chat endpoints.
-- LangChain orchestrates the "Contextualization" (rewriting user queries based on history).
+## Prerequisites
 
-### Frontend (The Visuals)
-- React + Vite for the UI.
-- React Force Graph 3D for the interactive visualization.
-- **Camera Auto-Focus**: The camera physically flies to the node mentioned in the chat.
+- Neo4j Aura account (URI, username, password)
+- Groq API key (for Llama 3)
+- Python 3.11+, Node.js, npm
 
-## 🛠️ Tech Stack
+## Backend — Setup (Windows)
 
-| Component | Technology |
-|-----------|-----------|
-| Backend | Python 3.11+, FastAPI, LangChain, Groq SDK |
-| Database | Neo4j (AuraDB Free Tier) |
-| AI Engine | Llama 3.3 70B (via Groq API) |
-| Frontend | React, Tailwind CSS, Framer Motion, Three.js (React Force Graph) |
+1. Open terminal in the `backend` folder:
+   ```powershell
+   cd "C:\CODE\ResumeProjects\silicon-valley-insider\backend"
+   ```
 
-## 🚀 Setup Guide
+2. Create & activate venv:
+   PowerShell:
+   ```powershell
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+   ```
+   CMD:
+   ```cmd
+   python -m venv venv
+   venv\Scripts\activate.bat
+   ```
 
-### Prerequisites
-- [Neo4j Aura Account](https://neo4j.com/cloud/aura/) - Get a Free Instance. Save your password and URI.
-- [Groq API Key](https://console.groq.com) - Get a Free Key.
-- Python 3.11+ and Node.js installed.
+3. Install dependencies:
+   ```powershell
+   pip install -r requirements.txt
+   ```
 
-### 1. Clone & Configure Backend
+4. Create `.env` in `backend`:
+   ```ini
+   NEO4J_URI=neo4j+s://your-instance-id.databases.neo4j.io
+   NEO4J_USERNAME=neo4j
+   NEO4J_PASSWORD=your-neo4j-password
+   GROQ_API_KEY=gsk_your_groq_api_key
+   ```
 
-```bash
-cd backend
+5. Run backend (recommended):
+   ```powershell
+   # from backend folder
+   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+   Or:
+   ```powershell
+   python -m app.main
+   ```
 
-# Create Virtual Environment
-python -m venv venv
+## Frontend — Setup
 
-# Activate (Windows PowerShell)
-venv\Scripts\Activate.ps1
+1. Open a new terminal and go to `frontend`:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+2. Open: http://localhost:5173
 
-# Activate (Windows Git Bash)
-source venv/Scripts/activate
+## Populate the Graph (First Run)
 
-# Activate (Mac/Linux)
-source venv/bin/activate
-
-# Install Dependencies
-pip install -r requirements.txt
-```
-
-Create a `.env` file in the backend folder:
-
-```ini
-NEO4J_URI=neo4j+s://your-instance-id.databases.neo4j.io
-NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=your-neo4j-password
-GROQ_API_KEY=gsk_your_groq_api_key
-```
-
-Start the Server:
-
-```bash
-python -m app.main
-```
-
-You should see: `✅ Connected to Neo4j successfully!`
-
-### 2. Configure Frontend
-
-Open a new terminal:
-
-```bash
-cd frontend
-
-# Install Dependencies
-npm install
-
-# Start UI
-npm run dev
-```
-
-Open http://localhost:5173 in your browser.
-
-## 🧪 First Run: Populating the Graph
-
-When you first launch the app, the screen will be black because the database is empty. You need to run the Simulation Script to inject data.
-
-We have built a sophisticated simulation script that mimics a live news feed over several months (OpenAI firing drama, Nvidia chip releases, Apple Intelligence, etc.).
-
-1. Keep the Backend and Frontend running.
-2. Open a 3rd Terminal in the backend folder.
-3. Run the Simulation:
+The frontend will appear empty until the graph has data. Use the simulator to seed data:
 
 ```bash
+# from backend folder
 python simulate_feed.py
 ```
 
-**What happens next:**
-- The script sends raw headlines to Llama 3.
-- Llama 3 extracts nodes/edges and detects sentiment (e.g., "Elon Sued OpenAI" → Negative Edge).
-- The data is pushed to Neo4j.
-- Watch your Frontend: You will see the graph grow in real-time without refreshing.
+This sends simulated headlines through the extractor and writes nodes/edges to Neo4j.
 
-## 🎮 How to Use
+## API Endpoints (examples)
 
-### 1. The Visualizer
+- GET / → status
+- GET /test-db → simple Neo4j test query
+- GET /scrape-and-extract → run one extraction and save to DB
+- POST /chat → GraphRAG chat (body: { "question": "...", "history": [...] })
 
-- **Rotate/Zoom**: Click and drag to explore the Silicon Valley ecosystem.
-- **Nodes**: Represent Companies, People, or Products.
-- **Edges**: Represent relationships (Hired, Fired, Sued, Invested).
-- **Colors**: Different colors for different Entity types (Person vs Company).
-
-### 2. The Agentic Chat (GraphRAG)
-
-Ask complex questions in the chat box. The Agent remembers context.
-
-**Try this conversation flow:**
-
-| Step | Question | Result |
-|------|----------|--------|
-| 1 | "What happened between Sam Altman and OpenAI?" | The bot explains he was fired and rehired. The Camera flies to the OpenAI node. |
-| 2 | "Who is hostile towards them?" | The bot understands "them" = OpenAI. It finds Elon Musk (Sued). The Camera flies to Elon Musk. |
-| 3 | "How is Microsoft involved?" | It explains the investment partnership. |
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 root/
-├── backend/
-│   ├── app/
-│   │   ├── main.py                    # API Entry & Scheduler
-│   │   ├── core/
-│   │   │   ├── database.py            # Neo4j Connection
-│   │   │   ├── config.py              # Environment Config
-│   │   │   └── scheduler.py           # Background Jobs
-│   │   ├── services/
-│   │   │   ├── extractor.py           # Llama 3 Logic (Text → JSON)
-│   │   │   ├── qa_service.py          # RAG Logic (Context → Answer)
-│   │   │   ├── graph_store.py         # Neo4j Cypher Queries
-│   │   │   └── scraper.py             # RSS Feed Fetching
-│   │   └── models/
-│   │       └── schemas.py             # Pydantic Data Models
-│   ├── simulate_feed.py               # TEST SCRIPT (Run this first!)
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── GraphView.jsx          # 3D Visualizer + Camera Logic
-│   │   │   ├── ChatOverlay.jsx        # Chat UI + History Logic
-│   │   │   └── CursorGlow.jsx         # Custom UI Effects
-│   │   ├── App.jsx                    # Layout & Layering
-│   │   ├── App.css                    # Layer Styling
-│   │   └── index.css                  # Global Styles
-│   ├── tailwind.config.js
-│   └── package.json
-│
-└── README.md
+├─ backend/
+│  ├─ app/
+│  │  ├─ main.py
+│  │  ├─ core/
+│  │  │  ├─ database.py
+│  │  │  └─ config.py
+│  │  ├─ services/
+│  │  │  ├─ extractor.py
+│  │  │  ├─ graph_store.py
+│  │  │  └─ qa_service.py
+│  │  └─ models/
+│  ├─ simulate_feed.py
+│  └─ requirements.txt
+└─ frontend/
+   ├─ src/
+   └─ package.json
 ```
 
-## 🛡️ Troubleshooting
-- **Graph is Empty?**
-  - Did you run `python simulate_feed.py`?
-  - Check your .env credentials.
-- **Camera doesn't fly?**
-  - Ensure the node exists in the graph. The chat logs 🎯 Chatbot identified target: [Name] in the console.
-- **"Connection Error"?**
-  - Ensure Backend is running on Port 8000.
+## Troubleshooting
+
+- ModuleNotFoundError: run with `python -m app.main` or start uvicorn from the `backend` folder.
+- Pydantic extra env errors: confirm `.env` keys match fields in `app/core/config.py` or set config to ignore extras.
+- Neo4j connection issues: verify URI, username, and password; ensure Aura instance is accessible.
+
+## Notes
+
+- Keep secrets out of VCS. Use environment variables or a secret manager.
+- For development, CORS is permissive; tighten for production.
+- Adjust `/graph` LIMIT in `main.py` if frontend performance suffers.
+
+---
+
+Built for experimentation and demos — contributions welcome.
