@@ -9,7 +9,7 @@ export default function GraphView({ focusNode }) {
 
   const fetchGraphData = useCallback(async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/graph");
+      const res = await axios.get("http://72.61.232.29:8000/graph");
       setGraphData({
          nodes: res.data.nodes.map(n => ({...n})),
          links: res.data.links.map(l => ({...l}))

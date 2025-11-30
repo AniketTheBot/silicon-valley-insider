@@ -32,7 +32,7 @@ export default function ChatOverlay({ onFocusNode }) {
         role: msg.role === "user" ? "human" : "ai", // LangChain prefers 'human'/'ai'
         text: msg.text,
       }));
-      const res = await axios.post("http://127.0.0.1:8000/chat", {
+      const res = await axios.post("http://72.61.232.29:8000/chat", {
         question: query,
         history: historyPayload,
       });
