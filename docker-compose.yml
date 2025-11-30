@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # Replace PUBLIC_IP with your VPS IP address later
+      - VITE_API_URL=http://YOUR_VPS_IP:8000 
+    depends_on:
+      - backend

@@ -115,15 +115,13 @@ async def lifespan(app: FastAPI):
     neo4j_conn.close()
 
 
-
-
 @app.get("/graph")
 def get_full_graph():
     """
     Fetches the entire Knowledge Graph for the Frontend Visualizer.
     """
     session = neo4j_conn.get_session()
-    
+
     # 1. Fetch all relationships
     # We use LIMIT 1000 to prevent browser crashes if the graph gets too huge
     query = """
@@ -132,27 +130,27 @@ def get_full_graph():
     LIMIT 500
     """
     results = session.run(query)
-    
+
     nodes_dict = {}
     links = []
-    
+
     for record in results:
         source = record["s"]
         target = record["t"]
         rel = record["r"]
-        
+
         # 2. Process Nodes (Use a Dict to prevent Duplicates)
         # Neo4j Node Objects can be accessed like dicts for properties
         s_id = source.get("id", "Unknown")
         t_id = target.get("id", "Unknown")
-        
+
         # Get the Label (e.g., "Company", "Person") for coloring
         s_label = list(source.labels)[0] if source.labels else "Entity"
         t_label = list(target.labels)[0] if target.labels else "Entity"
 
         nodes_dict[s_id] = {"id": s_id, "group": s_label}
         nodes_dict[t_id] = {"id": t_id, "group": t_label}
-        
+
         # 3. Process Edges
         links.append({
             "source": s_id,
@@ -160,14 +158,36 @@ def get_full_graph():
             "relationship": rel.type,
             "sentiment": rel.get("sentiment", "Neutral")
         })
-        
+
     session.close()
-    
+
     # Convert nodes dict back to list
     return {
         "nodes": list(nodes_dict.values()),
         "links": links
     }
+
+
+@app.get("/trigger-scrape-secure-xyz")
+def trigger_scrape():
+    """
+    Public endpoint that an external Cron Job service can hit 
+    to wake up the server and run the ETL pipeline.
+    """
+    print("⏰ Manual Scrape Triggered...")
+    articles = fetch_latest_news()
+
+    processed_count = 0
+    for article in articles:
+        full_text = f"{article['title']}. {article['summary']}"
+        # Deduplication check is handled inside save_graph logic or extraction
+        graph_data = extract_graph_from_text(full_text)
+        if graph_data:
+            save_graph_to_neo4j(graph_data)
+            processed_count += 1
+
+    return {"status": "success", "processed": processed_count}
+
 
 if __name__ == "__main__":
     # This allows you to run the file directly with `python app/main.py`

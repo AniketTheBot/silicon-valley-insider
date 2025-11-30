@@ -1,0 +1,17 @@
+# Build Stage
+FROM node:18-alpine as build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+# This builds the 'dist' folder
+RUN npm run build
+
+# Production Stage (Serve static files)
+FROM node:18-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=build /app/dist ./dist
+
+# Serve the build on port 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
