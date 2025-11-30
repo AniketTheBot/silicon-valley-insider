@@ -16,11 +16,15 @@ from app.core.scheduler import start_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup logic
+    # Startup
     print("🚀 Starting up Silicon Valley Insider Backend...")
     neo4j_conn.connect()
+    
+    # Start the background scheduler
+    start_scheduler()  # <--- THIS IS NOW ACTIVE
+    
     yield
-    # Shutdown logic
+    # Shutdown
     print("🛑 Shutting down...")
     neo4j_conn.close()
 
@@ -98,21 +102,6 @@ def chat_with_graph(request: QueryRequest):
     """
     result = answer_question(request.question, request.history)
     return result
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    print("🚀 Starting up Silicon Valley Insider Backend...")
-    neo4j_conn.connect()
-
-    # Start the background scheduler
-    start_scheduler()  # <--- Add this line
-
-    yield
-    # Shutdown
-    print("🛑 Shutting down...")
-    neo4j_conn.close()
 
 
 @app.get("/graph")
