@@ -15,7 +15,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Replace PUBLIC_IP with your VPS IP address later
-      - VITE_API_URL=http://YOUR_VPS_IP:8000 
+      - VITE_API_URL=http://72.61.232.29:8000
     depends_on:
       - backend
